@@ -30,15 +30,16 @@ func createClient(c net.Conn) *Client {
 func (client *Client) handle() {
 
 	defer client.conn.Close()
+	defer fmt.Printf("Simultaneous : %v \r\n", atomic.AddUint64(&simultaneous, ^uint64(0)))
 
-	//	decoder := json.NewDecoder(client.conn)
 	encoder := json.NewEncoder(client.conn)
+	reader := bufio.NewReader(client.conn)
+
 	var wel = message{
 		PlayerID: client.playerID,
 		Command:  "WELCOME",
 		Data:     "",
 	}
-	reader := bufio.NewReader(client.conn)
 
 	encoder.Encode(wel)
 
@@ -71,9 +72,9 @@ func (client *Client) handle() {
 			return
 		}
 
-		// Message handle'a gönderilmeli
 		fmt.Println(msg)
-
+		// Mesaj handle'a gönderilmeli
+		incomeMessageJobs <- msg
 	}
 
 }

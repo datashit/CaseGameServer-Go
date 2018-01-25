@@ -24,7 +24,7 @@ var simultaneous uint64 // Bağlı tcp soket sayısı
 func (shake *NoClientHandshake) HandShake(conn net.Conn) {
 	fmt.Println("Handshake Complate!")
 
-	fmt.Printf("Simultaneous : %d \r\n", atomic.AddUint64(&simultaneous, 1))
+	fmt.Printf("Simultaneous : %v \r\n", atomic.AddUint64(&simultaneous, 1))
 
 	go createClient(conn).handle()
 }

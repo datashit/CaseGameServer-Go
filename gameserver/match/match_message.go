@@ -5,3 +5,8 @@ type message struct {
 	Command  string
 	Data     string
 }
+
+type incomeJobs struct {
+	client Client
+	msg    message
+}

@@ -14,4 +14,5 @@ type ServerSettings struct {
 func (s *ServerSettings) Load() {
 
 	s.handsaheker = &match.NoClientHandshake{CryptoType: &security.Nocrypto{}}
+
 }

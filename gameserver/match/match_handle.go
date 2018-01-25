@@ -1,22 +1,43 @@
 package match
 
+import (
+	"fmt"
+
+	"github.com/datashit/CaseGameServer-Go/gameserver/game"
+)
+
 var incomeMessageJobs = make(chan incomeJobs, 1000)
 
-func createMatchHandleWorker(workerSize int) {
+// CreateMatchHandleWorker : fonksiyonu asenkron matchHandle worker olusturur.
+// workerSize : worker sayısı
+func CreateMatchHandleWorker(workerSize int) {
 	for w := 1; w <= workerSize; w++ {
-		go match_handle(incomeMessageJobs)
+		go matchHandle(incomeMessageJobs)
 	}
 }
 
-func match_handle(job <-chan incomeJobs) {
+func matchHandle(job <-chan incomeJobs) {
 	for j := range job {
-		switch j.msg.Command {
-		case "MATCH":
-		case "LOBBY":
-		case "CHAT":
-		case "CONTACTS":
-		case "PARTY":
+		switch j.inMsg.Command {
+		case "FIND_GAME":
+			fmt.Println("Finding game")
+			j.inMsg.Command = "SEARCH_GAME"
+			j.inClient.encoder.Encode(j.inMsg)
+			match(j.inClient)
 		default:
 		}
+	}
+}
+
+var partner = make(chan Client)
+
+func match(client Client) {
+	fmt.Printf("Player %v : Waiting for a player... \r\n", client.playerID)
+	select {
+	case partner <- client:
+	case p := <-partner:
+		g := game.CreateGame(p.playerID, client.playerID)
+		fmt.Printf("Game Create : %v", g.Id)
+		go g.StartListen()
 	}
 }

@@ -7,6 +7,6 @@ type message struct {
 }
 
 type incomeJobs struct {
-	client Client
-	msg    message
+	inClient Client
+	inMsg    message
 }

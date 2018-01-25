@@ -13,6 +13,8 @@ import (
 type Client struct {
 	playerID uint64   // Oyuncu numarası
 	conn     net.Conn // Oyuncu tcp bağlantısı
+	encoder  *json.Encoder
+	reader   *bufio.Reader
 }
 
 var playerIDCounter uint64 //Benzersiz player id sayacı
@@ -22,29 +24,32 @@ func createClient(c net.Conn) *Client {
 	client := &Client{
 		playerID: atomic.AddUint64(&playerIDCounter, 1), // Benzersiz player id kullanılmalı
 		conn:     c,
+		encoder:  json.NewEncoder(c),
+		reader:   bufio.NewReader(c),
 	}
 
 	return client
 }
 
-func (client *Client) handle() {
-
-	defer client.conn.Close()
-	defer fmt.Printf("Simultaneous : %v \r\n", atomic.AddUint64(&simultaneous, ^uint64(0)))
-
-	encoder := json.NewEncoder(client.conn)
-	reader := bufio.NewReader(client.conn)
-
+func (client *Client) welcome() {
 	var wel = message{
 		PlayerID: client.playerID,
 		Command:  "WELCOME",
 		Data:     "",
 	}
 
-	encoder.Encode(wel)
+	client.encoder.Encode(wel)
+}
+
+func (client *Client) handle() {
+
+	defer fmt.Printf("Simultaneous : %v \r\n", atomic.AddUint32(&simultaneous, ^uint32(0)))
+	defer client.conn.Close()
+
+	client.welcome()
 
 	for {
-		lineData, isPrefix, err := reader.ReadLine()
+		lineData, isPrefix, err := client.reader.ReadLine()
 		if err == io.EOF {
 			fmt.Println("Server disconnected: " + client.conn.RemoteAddr().String())
 			return
@@ -74,7 +79,8 @@ func (client *Client) handle() {
 
 		fmt.Println(msg)
 		// Mesaj handle'a gönderilmeli
-		incomeMessageJobs <- msg
+		ijob := incomeJobs{inClient: *client, inMsg: msg}
+		incomeMessageJobs <- ijob
 	}
 
 }

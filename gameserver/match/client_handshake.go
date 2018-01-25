@@ -18,13 +18,13 @@ type NoClientHandshake struct {
 	CryptoType security.Imessagecrypto
 }
 
-var simultaneous uint64 // Bağlı tcp soket sayısı
+var simultaneous uint32 // Bağlı tcp soket sayısı
 
 // HandShake :  Gelen isteği değerlendirir
 func (shake *NoClientHandshake) HandShake(conn net.Conn) {
 	fmt.Println("Handshake Complate!")
 
-	fmt.Printf("Simultaneous : %v \r\n", atomic.AddUint64(&simultaneous, 1))
+	fmt.Printf("Simultaneous : %v \r\n", atomic.AddUint32(&simultaneous, 1))
 
 	go createClient(conn).handle()
 }

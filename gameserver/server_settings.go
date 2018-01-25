@@ -15,4 +15,5 @@ func (s *ServerSettings) Load() {
 
 	s.handsaheker = &match.NoClientHandshake{CryptoType: &security.Nocrypto{}}
 
+	match.CreateMatchHandleWorker(5)
 }

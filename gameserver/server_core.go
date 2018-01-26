@@ -7,7 +7,6 @@ import (
 
 //ServerCore : Server yığını
 type ServerCore struct {
-	HostAddr       string         // Host soket adresi
 	ListenerSocket net.Listener   // Dinlenen soket
 	shutdownSignal chan bool      // Kapatma sinyali
 	runing         bool           // Server calıştı bilgisi
@@ -17,15 +16,16 @@ type ServerCore struct {
 //NewInstance : bir server nesnesi oluşturup geri döner.
 func NewInstance(address string) *ServerCore {
 	server := &ServerCore{
-		HostAddr:       address,
 		shutdownSignal: make(chan bool, 1),
 	}
+	server.settings.HostAddr = address
 	server.settings.Load() // Server ayarları yükleniyor
 
 	return server
 }
 
-func (server *ServerCore) isRun() bool {
+// IsRun : serverın çalışıp çalışmadığı bilgisini döner.
+func (server *ServerCore) IsRun() bool {
 	return server.runing
 }
 
@@ -45,7 +45,7 @@ func (server *ServerCore) Shutdown() {
 }
 
 func (server *ServerCore) listen() {
-	l, err := net.Listen("tcp", server.HostAddr)
+	l, err := net.Listen("tcp", server.settings.HostAddr)
 	if err != nil {
 		fmt.Println("Error: ")
 		fmt.Println(err)
@@ -71,7 +71,7 @@ func (server *ServerCore) listen() {
 			fmt.Println("Incoming connection request <--")
 
 			// Baglantı handle' a gönderiliyor.
-			go server.settings.handsaheker.HandShake(conn)
+			go server.settings.handsaheker.HandShake(&conn)
 		}
 	}
 

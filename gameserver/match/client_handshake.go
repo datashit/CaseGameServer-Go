@@ -3,14 +3,14 @@ package match
 import (
 	"fmt"
 	"net"
-	"sync/atomic"
 
+	"github.com/datashit/CaseGameServer-Go/gameserver/game"
 	"github.com/datashit/CaseGameServer-Go/gameserver/security"
 )
 
 // IClientHandshake : Client Handshake Arayüzü
 type IClientHandshake interface {
-	HandShake(net.Conn)
+	HandShake(*net.Conn)
 }
 
 // NoClientHandshake : direk kabul eden hand shake yığını
@@ -18,13 +18,10 @@ type NoClientHandshake struct {
 	CryptoType security.Imessagecrypto
 }
 
-var simultaneous uint32 // Bağlı tcp soket sayısı
-
 // HandShake :  Gelen isteği değerlendirir
-func (shake *NoClientHandshake) HandShake(conn net.Conn) {
+func (shake *NoClientHandshake) HandShake(conn *net.Conn) {
 	fmt.Println("Handshake Complate!")
 
-	fmt.Printf("Simultaneous : %v \r\n", atomic.AddUint32(&simultaneous, 1))
-
-	go createClient(conn).handle()
+	c := game.CreateClient(conn) // Kullanıcı oluşturuluyor.
+	go clientReadHandle(c)       // Kullanıcı match handle'ı başlatılıyor.
 }

@@ -10,7 +10,7 @@ func TestSocketCheckServerStartandShutdown(t *testing.T) {
 	server := NewInstance(addr)
 	go server.Start() // Server baslatiliyor
 
-	for !server.isRun() {
+	for !server.IsRun() {
 		// Serverın online olması bekleniyor.
 	}
 
@@ -22,7 +22,7 @@ func TestSocketCheckServerStartandShutdown(t *testing.T) {
 
 	server.Shutdown()
 
-	for server.isRun() {
+	for server.IsRun() {
 		// Serverın kapatılması bekleniyor.
 	}
 

@@ -1,5 +1,5 @@
 # CI
-[![Build Status](https://travis-ci.org/datashit/CaseGameServer-Go.svg?branch=develop)](https://travis-ci.org/datashit/CaseGameServer-Go)
+[![Build Status](https://travis-ci.org/datashit/CaseGameServer-Go.svg?branch=master)](https://travis-ci.org/datashit/CaseGameServer-Go)
 
 # CaseGameServer-Go
 TCP ve UDP üzerinden haberleşen 2 kişilik game loby kuran bir game server case yazılımı.

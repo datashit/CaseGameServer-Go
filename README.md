@@ -15,7 +15,7 @@ Client TCP bağlantısı yaptığında server player ID ile birlikte welcome  a�
 {"PlayerID":1,"Command":"WELCOME","Data":""}
 
 Client Server' a aşağıdaki mesajı yollarsa oyun arama kuyruğuna girer:<br />
-{"PlayerID":1,"Command":"FIND_GAME","Data":""}
+{"PlayerID":1,"Command":"FIND_GAME","Data":""}<br />
 Oyun arama kuyruk cevabı:<br />
 {"PlayerID":1,"Command":"SEARCH_GAME","Data":""}
 
